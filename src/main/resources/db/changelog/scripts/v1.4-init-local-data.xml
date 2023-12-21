@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+">
+
+    <changeSet id="1.4.1" author="datpd">
+
+        <sql>
+            insert into product (name, description, price, category_id, created_at, modified_at)
+            values ('Product name 1', 'Product 1 description', 3465000, 1, now(), now()),
+                   ('Product name 2', 'Product 2 description', 3094000, 2, now(), now()),
+                   ('Product name 3', 'Product 3 description', 4438000, 3, now(), now()),
+                   ('Product name 4', 'Product 4 description', 3169000, 1, now(), now()),
+                   ('Product name 5', 'Product 5 description', 868000, 2, now(), now()),
+                   ('Product name 6', 'Product 6 description', 3612000, 3, now(), now()),
+                   ('Product name 7', 'Product 7 description', 4502000, 1, now(), now()),
+                   ('Product name 8', 'Product 8 description', 2388000, 2, now(), now()),
+                   ('Product name 9', 'Product 9 description', 2525000, 3, now(), now()),
+                   ('Product name 10', 'Product 10 description', 3822000, 1, now(), now());
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>
