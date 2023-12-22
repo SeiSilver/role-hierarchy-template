@@ -1,9 +1,9 @@
 package com.spring.template.silver.app.usecase.utils;
 
-import com.spring.template.silver.app.usecase.exception.InvalidJsonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.template.silver.app.usecase.exception.InvalidJsonException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -36,7 +36,8 @@ public class PayloadUtils {
     try {
       return objectMapper.writeValueAsString(object);
     } catch (JsonProcessingException e) {
-      return null;
+      log.error("Can not parse JSON data", e);
+      throw new RuntimeException(e);
     }
   }
 

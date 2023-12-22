@@ -5,10 +5,12 @@ import com.spring.template.silver.app.usecase.exception.DataNotFoundException;
 import com.spring.template.silver.app.usecase.exception.error.ErrorDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 @Slf4j
 @RestControllerAdvice
@@ -28,9 +30,9 @@ public class CustomExceptionHandler {
   private ErrorDetail handleRequestParameterExceptions(MissingServletRequestParameterException ex) {
     log.error(FOUND_AN_ERROR, ex.getMessage(), ex);
     return ErrorDetail
-        .builder()
-        .errorMessage(ex.getMessage())
-        .build();
+      .builder()
+      .errorMessage(ex.getMessage())
+      .build();
   }
 
   @ExceptionHandler(value = {DataNotFoundException.class})
@@ -38,6 +40,13 @@ public class CustomExceptionHandler {
   private ErrorDetail handleDataNotFound(DataNotFoundException ex) {
     log.error(FOUND_AN_ERROR, ex.getMessage(), ex);
     return ex.getErrorDetail();
+  }
+
+  @ExceptionHandler(value = {AccessDeniedException.class})
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  private ErrorDetail handleAccessDeniedException(AccessDeniedException ex) {
+    log.error(FOUND_AN_ERROR, ex.getMessage(), ex);
+    return ErrorDetail.builder().errorMessage(ex.getMessage()).build();
   }
 
 }

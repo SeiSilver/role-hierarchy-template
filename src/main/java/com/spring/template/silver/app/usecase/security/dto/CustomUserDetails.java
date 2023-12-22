@@ -2,21 +2,17 @@ package com.spring.template.silver.app.usecase.security.dto;
 
 import com.spring.template.silver.app.infrastructure.entity.AccountEntity;
 import com.spring.template.silver.app.infrastructure.entity.RoleEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Getter
-@AllArgsConstructor
-public class CustomUserDetails implements UserDetails {
-
-  private final AccountEntity accountEntity;
+public record CustomUserDetails(AccountEntity accountEntity) implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -24,12 +20,15 @@ public class CustomUserDetails implements UserDetails {
   }
 
   public static List<GrantedAuthority> getAuthorityList(AccountEntity accountEntity) {
-    List<GrantedAuthority> grantList = new ArrayList<>();
+    Set<GrantedAuthority> grantList = new HashSet<>();
     List<RoleEntity> roles = accountEntity.getRoles();
     for (RoleEntity role : roles) {
       grantList.add(new SimpleGrantedAuthority(role.getRoleName().name()));
+      grantList.addAll(role.getPermissions().stream().map(
+        i -> new SimpleGrantedAuthority(i.getPermissionName().name())
+      ).toList());
     }
-    return grantList;
+    return new ArrayList<>(grantList);
   }
 
   @Override
@@ -60,6 +59,11 @@ public class CustomUserDetails implements UserDetails {
   @Override
   public boolean isEnabled() {
     return false;
+  }
+
+  @Override
+  public AccountEntity accountEntity() {
+    return accountEntity;
   }
 
 }

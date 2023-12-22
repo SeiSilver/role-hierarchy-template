@@ -3,11 +3,11 @@ package com.spring.template.silver.app.usecase.security.filter;
 import com.spring.template.silver.app.usecase.security.service.CustomUserDetailService;
 import com.spring.template.silver.app.usecase.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,21 +18,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private JwtUtils jwtUtils;
-  @Autowired
-  private CustomUserDetailService customUserDetailsService;
+  private final JwtUtils jwtUtils;
+
+  private final CustomUserDetailService customUserDetailsService;
+
+  public JwtAuthenticationFilter(JwtUtils jwtUtils, CustomUserDetailService customUserDetailsService) {
+    this.jwtUtils = jwtUtils;
+    this.customUserDetailsService = customUserDetailsService;
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request,
                                   HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
-    String jwt = null;
+    throws ServletException, IOException {
     try {
 
-      jwt = getJwtFromRequest(request);
+      String jwt = getJwtFromRequest(request);
 
       if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt)) {
 
@@ -40,16 +44,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         UsernamePasswordAuthenticationToken
-            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+          authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
       }
     } catch (Exception ex) {
-      if (jwt != null) {
-        log.error("failed on set user authentication", ex);
-      }
+      log.error("failed on set user authentication", ex);
     }
 
     filterChain.doFilter(request, response);

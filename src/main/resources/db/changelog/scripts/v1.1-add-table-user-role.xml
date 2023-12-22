@@ -38,6 +38,21 @@
             <column name="role_id" type="int"/>
         </createTable>
 
+        <createTable tableName="permission">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="permission_name" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="role_permission">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="role_id" type="int"/>
+            <column name="permission_id" type="int"/>
+        </createTable>
+
         <addForeignKeyConstraint
                 baseTableName="account_role"
                 baseColumnNames="account_id"
@@ -50,6 +65,20 @@
                 baseColumnNames="role_id"
                 constraintName="table-account-role-fk-role-id"
                 referencedTableName="role"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="role_permission"
+                baseColumnNames="role_id"
+                constraintName="table-role-permission-fk-role-id"
+                referencedTableName="role"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="role_permission"
+                baseColumnNames="permission_id"
+                constraintName="table-role-permission-fk-permission-id"
+                referencedTableName="permission"
                 referencedColumnNames="id"/>
 
     </changeSet>

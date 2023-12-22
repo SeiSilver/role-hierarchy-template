@@ -4,6 +4,7 @@ public enum RoleType {
 
   ROLE_USER,
   ROLE_MODERATOR,
+  ROLE_STAFF,
   ROLE_ADMIN
 
 }
